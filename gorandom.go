@@ -19,7 +19,7 @@ is based on the Advanced Encryption Standard (AES) cipher operating in
 cipher-block chaining (CBC) mode. Both the AES key and CBC initialization vector
 will be seeded from the operating system's cryptographically secure PRNG.
 
-This implementation is capable of spawning multiple rountines that generate
+This implementation is capable of spawning multiple routines that generate
 pseudo-random data in parallel. By default, this generator will spawn off a
 number of routines equal to the number of logical cores in an attempt to
 maximize the output. If the output is not being consumed as fast as data is
@@ -78,9 +78,11 @@ func main() {
 	fs.Parse(os.Args[1:])
 	if NumJobs <= 0 {
 		fmt.Fprintln(os.Stderr, "Number of jobs must be positive.")
+		os.Exit(1)
 	}
 	if NumBlocks <= 0 {
 		fmt.Fprintln(os.Stderr, "Number of blocks to generate must be positive.")
+		os.Exit(1)
 	}
 
 	// Spin off a great number of workers
