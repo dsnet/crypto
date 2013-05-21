@@ -18,7 +18,7 @@ func RandGen(comm chan io.Reader, quit chan bool) {
 	for {
 		// Generate a random new encryption key
 		key := make([]byte, aes.BlockSize)
-		if num, _ := rand.Read(key); num != aes.BlockSize {
+		if num, _ := io.ReadFull(rand.Reader, key); num != aes.BlockSize {
 			panic("Could not seed a random cryptographic key.")
 		}
 
@@ -30,7 +30,7 @@ func RandGen(comm chan io.Reader, quit chan bool) {
 
 		// Generate a random initialization vector for cipher block chaining
 		vector := make([]byte, aes.BlockSize)
-		if num, _ := rand.Read(vector); num != aes.BlockSize {
+		if num, _ := io.ReadFull(rand.Reader, vector); num != aes.BlockSize {
 			panic("Could not seed a random initialization vector.")
 		}
 
