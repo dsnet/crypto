@@ -38,5 +38,5 @@ The diminishing returns on performance with increased number of routines is
 likely caused by the system starting to be memory-throughput bound rather than
 CPU bound.
 
-For comparison, the system urandom device provided by Linux Mint 15 is capable
+For comparison, the system urandom device provided by Linux 3.8.0 is capable
 of generating data at 15.8MB/s.
