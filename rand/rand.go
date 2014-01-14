@@ -26,10 +26,16 @@ type mondata struct {
 }
 
 func newCrypter() *crypter {
+	// TODO(jtsai): By default, this library will only spin up one generator
+	// routine at startup. This is to avoid unnecessary crunching of copious
+	// amounts of pseudo-random data if the application doesn't actually use
+	// them. In the future, the library should start with one routine and
+	// automatically ramp up to meet demands.
 	crypt := new(crypter)
 	crypt.dataChan = make(chan []byte, 1)
 	crypt.monChan = make(chan mondata, 1)
 	crypt.monChan <- mondata{1, nil}
+
 	go crypt.monitor()
 	return crypt
 }
@@ -47,6 +53,8 @@ func (c *crypter) Read(buf []byte) (n int, err error) {
 	return n, nil
 }
 
+// Monitor routine that starts and stops generator routines to match the number
+// of routines specified by the SetNumRoutines function.
 func (c *crypter) monitor() {
 	var genQuits []chan bool
 	var md mondata
@@ -55,18 +63,20 @@ func (c *crypter) monitor() {
 		case md, ok = <-c.monChan:
 			numPre := len(genQuits)
 
-			// Start routines
-			for len(genQuits) < md.num {
-				quit := make(chan bool)
-				genQuits = append(genQuits, quit)
-				go c.generator(quit)
-			}
+			if md.num > 0 {
+				// Start routines
+				for len(genQuits) < md.num {
+					quit := make(chan bool)
+					genQuits = append(genQuits, quit)
+					go c.generator(quit)
+				}
 
-			// End routines
-			for _, quit := range genQuits[md.num:] {
-				close(quit)
+				// End routines
+				for _, quit := range genQuits[md.num:] {
+					close(quit)
+				}
+				genQuits = genQuits[:md.num]
 			}
-			genQuits = genQuits[:md.num]
 
 			if md.ret != nil {
 				md.ret <- numPre
@@ -75,6 +85,10 @@ func (c *crypter) monitor() {
 	}
 }
 
+// Generator routine that generates pseudo-random data by continuously
+// encrypting data using the AES cipher running in CBC mode. To avoid producing
+// a ton of data initially that may not get used, the generator starts with
+// generating 4KiB and gradually works up to 1MiB.
 func (c *crypter) generator(quit chan bool) {
 	const minBlocks = 256
 	const maxBlocks = 65536
