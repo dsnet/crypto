@@ -30,7 +30,8 @@ func newCrypter() *crypter {
 	// routine at startup. This is to avoid unnecessary crunching of copious
 	// amounts of pseudo-random data if the application doesn't actually use
 	// them. In the future, the library should start with one routine and
-	// automatically ramp up to meet demands.
+	// automatically ramp up to meet demands. This algorithm should take into
+	// account that AES-NI instructions on x86 will vastly speed up AES.
 	crypt := new(crypter)
 	crypt.dataChan = make(chan []byte, 1)
 	crypt.monChan = make(chan mondata, 1)
