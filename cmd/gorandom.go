@@ -21,10 +21,8 @@ func errPanic(err error) {
 // is if the os.Stdout pipe gets closed. Since this is expected behaviour,
 // that error is ignored.
 func errIgnorePipe(err error) error {
-	if perr, ok := err.(*os.PathError); ok {
-		if perr.Err == syscall.EPIPE {
-			return nil
-		}
+	if perr, ok := err.(*os.PathError); ok && perr.Err == syscall.EPIPE {
+		return nil
 	}
 	return err
 }
