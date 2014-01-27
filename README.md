@@ -19,7 +19,7 @@ vastly improve AES encoding rates. The underlying Go library does
 take advantage of these instructions if available. In that situation, this
 library is likely to be more memory-throughput bound than CPU bound. Other
 than each generator occupying about 1MB of memory, this should not lead to
-noticeable degredation of performance since generators will block if their
+noticeable degradation of performance since generators will block if their
 outputs are not consumed fast enough.
 
 The author does not take responsibility for any damages potentially caused if
