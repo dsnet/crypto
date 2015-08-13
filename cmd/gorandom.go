@@ -8,11 +8,13 @@ package main
 import "os"
 import "io"
 import "fmt"
+import "math"
 import "syscall"
 import "runtime"
 import "unsafe"
 import "github.com/ogier/pflag"
 import "bitbucket.org/rawr/gorandom/rand"
+import "bitbucket.org/rawr/golib/strconv"
 
 // Check if the given file descriptor writes to a terminal.
 func isatty(fd int) bool {
@@ -23,9 +25,9 @@ func isatty(fd int) bool {
 
 func main() {
 	// Basic user configuration variables
-	count := pflag.Int64P("count", "n", -1, "Number of random bytes to generate")
-	force := pflag.BoolP("force", "f", false, "Force output to terminal")
-	procs := pflag.IntP("procs", "p", runtime.NumCPU(), "Maximum number of concurrent workers")
+	count := pflag.StringP("count", "n", "+Inf", "Number of random bytes to generate.")
+	force := pflag.BoolP("force", "f", false, "Force output to terminal.")
+	procs := pflag.IntP("procs", "p", runtime.NumCPU(), "Maximum number of concurrent workers.")
 	pflag.Parse()
 
 	if !(*force) && isatty(syscall.Stdout) {
@@ -38,16 +40,21 @@ func main() {
 		pflag.Usage()
 		os.Exit(1)
 	}
+	cnt, err := strconv.ParsePrefix(*count, strconv.AutoParse)
+	if err != nil || math.IsNaN(cnt) {
+		fmt.Fprintf(os.Stderr, "Number of bytes to generate is invalid.\n\n")
+		pflag.Usage()
+		os.Exit(1)
+	}
 
 	runtime.GOMAXPROCS(*procs)
 	rand.SetNumRoutines(*procs)
 
 	// Copy random data to stdout
-	var err error
-	if (*count) < 0 {
+	if int64(cnt) < 0 || math.IsInf(cnt, 0) {
 		_, err = io.Copy(os.Stdout, rand.Reader)
 	} else {
-		_, err = io.CopyN(os.Stdout, rand.Reader, *count)
+		_, err = io.CopyN(os.Stdout, rand.Reader, int64(cnt))
 	}
 	if perr, ok := err.(*os.PathError); ok && perr.Err == syscall.EPIPE {
 		err = nil // Expected error is for the sink to close the pipe
