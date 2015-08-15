@@ -11,18 +11,10 @@ import "fmt"
 import "math"
 import "syscall"
 import "runtime"
-import "unsafe"
+import "golang.org/x/crypto/ssh/terminal"
 import "github.com/ogier/pflag"
 import "bitbucket.org/rawr/gorandom/rand"
 import "bitbucket.org/rawr/golib/strconv"
-
-// Check if the given file descriptor writes to a terminal.
-func isatty(fd int) bool {
-	// TODO(jtsai): This only works on Linux! Support OSX and Windows.
-	var termios syscall.Termios
-	_, _, err := syscall.Syscall6(syscall.SYS_IOCTL, uintptr(fd), syscall.TCGETS, uintptr(unsafe.Pointer(&termios)), 0, 0, 0)
-	return err == 0
-}
 
 func main() {
 	// Basic user configuration variables
@@ -31,7 +23,7 @@ func main() {
 	procs := pflag.IntP("procs", "p", runtime.NumCPU(), "Maximum number of concurrent workers.")
 	pflag.Parse()
 
-	if !(*force) && isatty(syscall.Stdout) {
+	if !(*force) && terminal.IsTerminal(int(os.Stdout.Fd())) {
 		fmt.Fprintf(os.Stderr, "Random data not written to terminal.\n\n")
 		pflag.Usage()
 		os.Exit(1)
