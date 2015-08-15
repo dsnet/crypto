@@ -11,15 +11,15 @@ import "fmt"
 import "math"
 import "syscall"
 import "runtime"
-import "golang.org/x/crypto/ssh/terminal"
 import "github.com/ogier/pflag"
+import "golang.org/x/crypto/ssh/terminal"
 import "bitbucket.org/rawr/gorandom/rand"
 import "bitbucket.org/rawr/golib/strconv"
 
 func main() {
 	// Basic user configuration variables
-	count := pflag.StringP("count", "n", "+Inf", "Number of random bytes to generate.")
 	force := pflag.BoolP("force", "f", false, "Force output to terminal.")
+	count := pflag.StringP("count", "n", "+Inf", "Number of random bytes to generate.")
 	procs := pflag.IntP("procs", "p", runtime.NumCPU(), "Maximum number of concurrent workers.")
 	pflag.Parse()
 
@@ -28,14 +28,14 @@ func main() {
 		pflag.Usage()
 		os.Exit(1)
 	}
-	if (*procs) < 1 {
-		fmt.Fprintf(os.Stderr, "Number of workers must be positive.\n\n")
-		pflag.Usage()
-		os.Exit(1)
-	}
 	cnt, err := strconv.ParsePrefix(*count, strconv.AutoParse)
 	if err != nil || math.IsNaN(cnt) {
 		fmt.Fprintf(os.Stderr, "Number of bytes to generate is invalid.\n\n")
+		pflag.Usage()
+		os.Exit(1)
+	}
+	if (*procs) < 1 {
+		fmt.Fprintf(os.Stderr, "Number of workers must be positive.\n\n")
 		pflag.Usage()
 		os.Exit(1)
 	}
