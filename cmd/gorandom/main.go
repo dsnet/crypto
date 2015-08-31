@@ -13,8 +13,8 @@ import "syscall"
 import "runtime"
 import "github.com/ogier/pflag"
 import "golang.org/x/crypto/ssh/terminal"
-import "bitbucket.org/rawr/gorandom/rand"
-import "bitbucket.org/rawr/golib/strconv"
+import "github.com/dsnet/gorandom/rand"
+import "github.com/dsnet/golib/strconv"
 
 func main() {
 	// Basic user configuration variables
