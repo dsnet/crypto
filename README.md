@@ -35,7 +35,7 @@ To install the package:
 
 To install the gorandom binary (assumes ```$GOPATH/bin``` is in your ```$PATH```):
 
-1. Run the command: ```import "github.com/dsnet/gorandom/rand"```
+1. Run the command: ```go get github.com/dsnet/gorandom/cmd/gorandom"```
 2. Execute the binary: ```gorandom```
 
 
