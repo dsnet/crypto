@@ -11,9 +11,9 @@ import "fmt"
 import "math"
 import "syscall"
 import "runtime"
-import "github.com/ogier/pflag"
 import "golang.org/x/crypto/ssh/terminal"
-import "github.com/dsnet/gorandom/rand"
+import "github.com/ogier/pflag"
+import "github.com/dsnet/crypto/rand"
 import "github.com/dsnet/golib/strconv"
 
 func main() {
