@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE.md file.
 
-// Package ran implements a pseudo-random number generator (PRNG).
+// Package rand implements a pseudo-random number generator (PRNG).
 //
 // This was designed to be a faster alternative to the built-in /dev/urandom
 // device built into most Linux kernels. This PRNG is based on the
