@@ -11,9 +11,9 @@ import "testing"
 import "github.com/stretchr/testify/assert"
 
 func TestRead(t *testing.T) {
-	var n int = 1 << 24
+	var n int = 1 << 24 // 16 MiB
 	if testing.Short() {
-		n = 1 << 16
+		n = 1 << 16 // 64 KiB
 	}
 
 	d := make([]byte, n)
