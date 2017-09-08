@@ -5,16 +5,19 @@
 // A high performance pseudo-random number generator.
 package main
 
-import "os"
-import "io"
-import "fmt"
-import "math"
-import "syscall"
-import "runtime"
-import "golang.org/x/crypto/ssh/terminal"
-import "github.com/ogier/pflag"
-import "github.com/dsnet/crypto/rand"
-import "github.com/dsnet/golib/strconv"
+import (
+	"fmt"
+	"io"
+	"math"
+	"os"
+	"runtime"
+	"syscall"
+
+	"github.com/dsnet/crypto/rand"
+	"github.com/dsnet/golib/unitconv"
+	"github.com/ogier/pflag"
+	"golang.org/x/crypto/ssh/terminal"
+)
 
 func main() {
 	// Basic user configuration variables
@@ -28,7 +31,7 @@ func main() {
 		pflag.Usage()
 		os.Exit(1)
 	}
-	cnt, err := strconv.ParsePrefix(*count, strconv.AutoParse)
+	cnt, err := unitconv.ParsePrefix(*count, unitconv.AutoParse)
 	if err != nil || math.IsNaN(cnt) {
 		fmt.Fprintf(os.Stderr, "Number of bytes to generate is invalid.\n\n")
 		pflag.Usage()
